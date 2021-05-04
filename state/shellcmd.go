@@ -9,5 +9,10 @@ import (
 // ScheduleShellCmd schedules a shell command to be executed by the editor.
 func ScheduleShellCmd(state *EditorState, shellCmd string) {
 	log.Printf("Scheduled shell command: '%s'\n", shellCmd)
-	state.scheduledShellCmd = shell.NewCmd(shellCmd)
+	state.scheduledShellCmd = shell.NewCmd(shellCmd, shellCmdEnv(state))
+}
+
+func shellCmdEnv(state *EditorState) map[string]string {
+	// TODO: get selection
+	return nil
 }

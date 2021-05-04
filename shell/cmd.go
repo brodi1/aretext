@@ -1,6 +1,7 @@
 package shell
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -12,10 +13,11 @@ import (
 // Cmd represents a command to run in the shell.
 type Cmd struct {
 	cmd string
+	env map[string]string
 }
 
-func NewCmd(cmd string) *Cmd {
-	return &Cmd{cmd}
+func NewCmd(cmd string, env map[string]string) *Cmd {
+	return &Cmd{cmd, env}
 }
 
 // Run executes the command in a shell.
@@ -47,7 +49,7 @@ func (c *Cmd) runInShell() error {
 
 	s = append(s, "-c", c.cmd)
 	cmd := exec.Command(s[0], s[1:]...)
-	cmd.Env = os.Environ()
+	cmd.Env = c.envVarSlice()
 
 	// Allow the shell to take over stdin/stdout/stderr.
 	// This assumes that the tcell screen has been suspended.
@@ -59,6 +61,14 @@ func (c *Cmd) runInShell() error {
 		return errors.Wrapf(err, "Cmd.Run")
 	}
 	return nil
+}
+
+func (c *Cmd) envVarSlice() []string {
+	env := os.Environ()
+	for key, val := range c.env {
+		env = append(env, fmt.Sprintf("%s=%v", key, val))
+	}
+	return env
 }
 
 const defaultShell = "sh"
