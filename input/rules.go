@@ -613,6 +613,15 @@ var normalModeRules = append(cursorRules, []Rule{
 // These rules are used when the editor is in visual mode.
 var visualModeRules = append(cursorRules, []Rule{
 	{
+		Name: "show command menu",
+		Pattern: []EventMatcher{
+			{Key: tcell.KeyRune, Rune: ':'},
+		},
+		ActionBuilder: func(p ActionBuilderParams) Action {
+			return ShowCommandMenu(p.Config)
+		},
+	},
+	{
 		Name: "toggle visual mode charwise (v)",
 		Pattern: []EventMatcher{
 			{Key: tcell.KeyRune, Rune: 'v'},

@@ -6,6 +6,8 @@ import (
 	"github.com/aretext/aretext/shell"
 )
 
+const selectionEnvVar = "SELECTION"
+
 // ScheduleShellCmd schedules a shell command to be executed by the editor.
 func ScheduleShellCmd(state *EditorState, shellCmd string) {
 	log.Printf("Scheduled shell command: '%s'\n", shellCmd)
@@ -13,6 +15,12 @@ func ScheduleShellCmd(state *EditorState, shellCmd string) {
 }
 
 func shellCmdEnv(state *EditorState) map[string]string {
-	// TODO: get selection
-	return nil
+	env := make(map[string]string, 1)
+	buffer := state.documentBuffer
+	r := buffer.SelectedRegion()
+	selectionText := copyText(buffer.textTree, r.StartPos, r.EndPos-r.StartPos)
+	if len(selectionText) > 0 {
+		env[selectionEnvVar] = selectionText
+	}
+	return env
 }
